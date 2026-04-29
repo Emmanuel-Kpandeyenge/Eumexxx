@@ -8,6 +8,26 @@ from app.s3 import upload_file_to_s3, delete_file_from_s3 # importing the upload
 import uuid # importing the uuid module for generating unique identifiers
 from app.users import auth_backend, current_active_user, fastapi_users # importing the auth_backend and current_active_user from the users module in the app package for handling user authentication and retrieving the current active user
 
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
+VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
+
+
+def get_media_type(file_name: str, content_type: str | None = None) -> str:
+    if content_type:
+        if content_type.startswith("image/"):
+            return "image"
+        if content_type.startswith("video/"):
+            return "video"
+
+    extension = f".{file_name.rsplit('.', 1)[-1].lower()}" if "." in file_name else ""
+    if extension in IMAGE_EXTENSIONS:
+        return "image"
+    if extension in VIDEO_EXTENSIONS:
+        return "video"
+
+    raise HTTPException(status_code=400, detail="Unsupported file type")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_db_and_tables() # creating the database and tables before the application starts
@@ -31,11 +51,12 @@ async def upload_file(
     user: User = Depends(current_active_user), # defining a user parameter that depends on the current_active_user function to retrieve the currently authenticated user
     session: AsyncSession = Depends(get_async_session) # defining a session parameter that depends on the get_async_session function to provide an asynchronous database session
 ):
+    file_type = get_media_type(file.filename, file.content_type)
     file_url = await upload_file_to_s3(file)
     post = Post(
     caption=caption,
     url=file_url,
-    file_type="photo",
+    file_type=file_type,
     file_name=file.filename,
     user_id=user.id
 )
@@ -58,13 +79,17 @@ async def get_feed(
     user_dict = {u.id: u.email for u in users} # creating a dictionary to map user IDs to their email addresses for easy lookup
     posts_data = []
     for post in posts:
+        file_type = post.file_type
+        if file_type not in {"image", "video"}:
+            file_type = get_media_type(post.file_name)
+
         posts_data.append(
             {
                 "id": str(post.id),
                 "user_id": str(post.user_id),
                 "caption": post.caption,
                 "url": post.url,
-                "file_type": post.file_type,
+                "file_type": file_type,
                 "file_name": post.file_name,
                 "created_at": post.created_at.isoformat(),
                 "is_owner": post.user_id == user.id,
@@ -100,7 +125,6 @@ async def delete_post(post_id: str, session: AsyncSession = Depends(get_async_se
     await session.commit()
 
     return {"success": True, "message": "Deleted from S3 and DB"}
-
 
 
 
