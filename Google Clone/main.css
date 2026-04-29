@@ -1,0 +1,281 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #f7f3fb;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #453c50;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded";
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.top-nav {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: transparent;
+}
+
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.icon-button.dark {
+  color: #202124;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #efe8f7;
+  background: #6b4e44;
+  font-size: 20px;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 194px;
+}
+
+.logo {
+  margin: 0 0 50px;
+  color: #d4b8ff;
+  font-size: 88px;
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: 0;
+}
+
+.search {
+  width: min(100%, 1044px);
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 14px 0 25px;
+  border-radius: 34px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+
+.search-icon {
+  color: #5f6368;
+  font-size: 29px;
+}
+
+.search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  color: #202124;
+  background: transparent;
+  font-size: 24px;
+}
+
+.search input::placeholder {
+  color: #6d7076;
+  opacity: 1;
+}
+
+.search-actions {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.ai-button {
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 18px;
+  border-radius: 24px;
+  color: #202124;
+  background: #f2f3f5;
+  font-size: 21px;
+  font-weight: 500;
+}
+
+.ai-button:hover {
+  background: #e9eaee;
+}
+
+.shortcuts {
+  width: min(100%, 1540px);
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 15px;
+  margin-top: 46px;
+  padding: 0 40px;
+}
+
+.shortcut {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  padding: 0;
+  color: #eee9f4;
+  background: transparent;
+}
+
+.shortcut-circle {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #524d57;
+}
+
+.shortcut-icon {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.shortcut-label {
+  width: 100%;
+  overflow: hidden;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customize {
+  position: fixed;
+  right: 22px;
+  bottom: 28px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 24px;
+  border-radius: 24px;
+  color: #f3ecff;
+  background: #6f4aa2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.customize:hover {
+  background: #7950ae;
+}
+
+@media (max-width: 1100px) {
+  .home {
+    padding: 150px 24px 120px;
+  }
+
+  .shortcuts {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .top-nav {
+    gap: 10px;
+    padding: 0 14px;
+  }
+
+  .home {
+    padding-top: 110px;
+  }
+
+  .logo {
+    margin-bottom: 34px;
+    font-size: 58px;
+  }
+
+  .search {
+    height: auto;
+    min-height: 58px;
+    padding: 8px 12px 8px 18px;
+  }
+
+  .search input {
+    font-size: 17px;
+  }
+
+  .ai-button {
+    width: 42px;
+    padding: 0;
+    justify-content: center;
+    font-size: 0;
+  }
+
+  .shortcuts {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0;
+  }
+
+  .customize {
+    right: 14px;
+    bottom: 16px;
+  }
+}
