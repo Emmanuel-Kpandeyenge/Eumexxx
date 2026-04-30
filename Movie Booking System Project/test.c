@@ -65,10 +65,10 @@ static void menuScreen() {
 }
 static void admin() {
   char password[] = "3365", p[20];
-  int y;
+  int n = 1, y;
 
   printf("\nPassword:");
-  scanf("%s", p);
+  scanf("%s", &p);
   fflush(stdout);
 
   y = strcmp(p, password);
@@ -77,8 +77,9 @@ static void admin() {
     printf("\nSucessfully Logged In\n\n");
     adminMenu();
   } else {
-    printf("\nWrong Password, try again");
+    printf("\nWrong Password, try again", 1 - n);
     menuScreen();
+    n++;
   }
 }
 
@@ -124,18 +125,17 @@ static void login() {
   FILE *log;
   log = fopen("login3.txt", "r");
   if (log == NULL) {
-    printf("\nNo users registered yet. Please register first.\n");
-    menuScreen();
-    return;
+    fputs("Error at opening File!", stderr);
+    exit(1);
   }
 
   struct login l;
 
   printf("Please Enter your login credentials below");
   printf("\nUsername:  ");
-  scanf("%s", username);
+  scanf("%s", &username);
   printf("\nPassword: ");
-  scanf("%s", password);
+  scanf("%s", &password);
 
   while (fread(&l, sizeof(l), 1, log)) {
     if (strcmp(username, l.username) == 0 &&
@@ -151,13 +151,14 @@ static void login() {
 }
 
 static void userRegister() {
-  char name[50];
-  char email[50];
-  char home[100];
+  char name;
+  char email;
+  char home;
   int phoneNum;
+  char pass;
 
   FILE *log;
-  log = fopen("login3.txt", "a");
+  log = fopen("login3.txt", "w");
   if (log == NULL) {
     printf("ERROR! File cannot open!", stderr);
     exit(1);
@@ -166,16 +167,16 @@ static void userRegister() {
   struct login l;
 
   printf("Enter Name:\t");
-  scanf("%s", name);
+  scanf("%s", &name);
 
-  // fscanf(fp, "%s", name);
+  // fscanf(fp, "%s", &name);
 
   printf("\nEnter Email Address:\t");
-  scanf("%s", email);
-  // fprintf(fp, "%s", email);
+  scanf("%s", &email);
+  // fprintf(fp, "%s", &email);
 
   printf("\nEnter Home Address:\t");
-  scanf("%s", home);
+  scanf("%s", &home);
   // fprintf(fp, "%s", &home);
 
   printf("\nEnter Phone Number:\t");
@@ -818,10 +819,10 @@ void buyTickets(char str[]) {
   printf(" What time?(without pm) ");
   scanf("%s %s %s", day, theater, movieTime);
 
-  if (strcmp(day, "Today") == 0 || strcmp(day, "today") == 0) {
+  if (strcmp(day, "Today") == 0 || strcmp(day, "today")) {
     if (strcmp(theater, "Alamo") == 0 && (strcmp(movieTime, "10:40") == 0)) {
       printf("Theater: %s Day: %s Time: %s", theater, day, movieTime);
-    } else if (strcmp(theater, "Cinemark") == 0 && strcmp(movieTime, "10:35") == 0) {
+    } else if (strcmp(theater, "Cinemark") == 0 && strcmp(movieTime, "10:35")) {
       printf("Theater: %s Day: %s Time: %s", theater, day, movieTime);
     } else {
       printf("Somthing was not entered right.");
@@ -852,8 +853,8 @@ void buyTickets(char str[]) {
          (strcmp(movieTime, "10:25") == 0))) {
       printf("Theater: %s Day: %s Time: %s", theater, day, movieTime);
     } else if (strcmp(theater, "Cinemark") == 0 &&
-               ((strcmp(movieTime, "2:00") == 0) || (strcmp(movieTime, "4:55") == 0) ||
-                (strcmp(movieTime, "7:45") == 0) || (strcmp(movieTime, "10:35") == 0))) {
+               (strcmp(movieTime, "2:00" == 0) || strcmp(movieTime, "4:55" == 0) || strcmp(movieTime, "7:45") == 0) ||
+                strcmp(movieTime, "10:35") == 0) {
       printf("Theater: %s Day: %s Time: %s", theater, day, movieTime);
     } else if (strcmp(theater, "Lubbock") == 0 &&
                ((strcmp(movieTime, "12:00") == 0) ||
@@ -889,19 +890,22 @@ void buyTickets(char str[]) {
 
   int total_amount;
   int cost = 8;
-  int purchaseCount = 0;
+  int numT = 0;
   printf("\n\nHow many tickets do you want to buy? ");
-  scanf("%d", &purchaseCount);
-  if (purchaseCount >= 10) {
+  scanf("%d", &numT);
+  total_amount = numT * cost;
+  if (numT < 10) {
+    printf("\n\tCart:");
+    printf("\nMovie: %s \nMovie Theater: %s \nDay and Time: %s %spm \nNumber "
+           "of Tickets: %d",
+           str, theater, day, movieTime, numT);
+  } else {
     printf("\nOnly allowed to buy max of 10 tickets. For now you can get 10.");
-    purchaseCount = 10;
+    numT = 10;
+    printf("\nMovie: %s \nMovie Theater: %s \nDay and Time: %s %spm \nNumber "
+           "of Tickets: %d",
+           str, theater, day, movieTime, numT);
   }
-  total_amount = purchaseCount * cost;
-  printf("\n\tCart:");
-  printf("\nMovie: %s \nMovie Theater: %s \nDay and Time: %s %spm \nNumber "
-         "of Tickets: %d",
-         str, theater, day, movieTime, purchaseCount);
-  numT += purchaseCount;
   printf("\nYour Total Price is: $ %d", total_amount);
   printf("\n\nLet's checkout!");
   checkout();
@@ -924,6 +928,7 @@ static void checkout() {
 }
 static void debit() {
   int cardNumber;
+  int expDate;
   int cvvNumber;
   int numberRead;
   int month;
@@ -931,12 +936,12 @@ static void debit() {
   int input;
 
   printf("\nEnter 16 digit Card Number:\t");
+  // fprint(fp, "%s", &cardNumber);
   numberRead = scanf("%d", &cardNumber);
   while (numberRead != 1) {
     printf("That is not a valid card number. \n");
     scanf("%*[^\n]");
     printf("\nEnter 16 Digit Card Number:\t");
-    numberRead = scanf("%d", &cardNumber);
   }
 
   do {
@@ -945,11 +950,14 @@ static void debit() {
     scanf("%d", &month);
     if (month < 1 || month > 12)
       printf("\nPlease enter a valid month");
+  } while (month < 1 || month > 12);
+  {
     printf("\nEnter the Year of the Card:");
     scanf("%d", &year);
-  } while (month < 1 || month > 12);
+  }
 
   printf("\nEnter CVV Number:\t");
+  // fprint(fp, "%s", &cvvNumber);
   numberRead = scanf("%d", &cvvNumber);
   while (numberRead != 1) {
     printf("That is not a valid CVV Number. \n");
@@ -973,6 +981,7 @@ static void debit() {
 }
 static void credit() {
   int cardNumber;
+  int expDate;
   int cvvNumber;
   int numberRead;
   int month;
@@ -980,12 +989,12 @@ static void credit() {
   int input;
 
   printf("\nEnter 16 digit Card Number:\t");
+  // fprint(fp, "%s", &cardNumber);
   numberRead = scanf("%d", &cardNumber);
   while (numberRead != 1) {
     printf("That is not a valid card number. \n");
     scanf("%*[^\n]");
     printf("\nEnter 16 Digit Card Number:\t");
-    numberRead = scanf("%d", &cardNumber);
   }
 
   do {
@@ -994,11 +1003,14 @@ static void credit() {
     scanf("%d", &month);
     if (month < 1 || month > 12)
       printf("\nPlease enter a valid month");
+  } while (month < 1 || month > 12);
+  {
     printf("\nEnter the Year of the Card:");
     scanf("%d", &year);
-  } while (month < 1 || month > 12);
+  }
 
   printf("\nEnter CVV Number:\t");
+  // fprint(fp, "%s", &cvvNumber);
   numberRead = scanf("%d", &cvvNumber);
   while (numberRead != 1) {
     printf("That is not a valid CVV Number. \n");
@@ -1022,7 +1034,7 @@ static void credit() {
 
 static void paypal() {
   {
-    char pemail[100];
+    int pemail;
 
     printf("\nEnter Paypal Email\t");
     scanf("%s", pemail);
@@ -1079,8 +1091,9 @@ static void newMainScreen() {
   case (0):
     {
     char oldMovie[][40] = {"The Polar Express", "Bones and All","Strange World", "The Menu", "Black Panther: Wakanda Forever"};
+    int row = 5;
     currentMovie(oldMovie, 5);
-    break;
+    break;     
     }
   case (1):
     upcomingMovie();
@@ -1170,7 +1183,7 @@ void add(char update[][40], int y) {
          "view.\n");
   char answer[6];
   printf("\nWould you like to add the movie to current movie list? (Y/N) ");
-  scanf("%s", answer);
+  scanf("%s", &answer);
 
   // char addMovie[] = "Violent Night";
   // update[6][40] = strcat(update, addMovie);
@@ -1201,7 +1214,7 @@ void removee(char update[][40], int y) {
   printf("\n\n\tCONTENT NEEDS TO BE REMOVED! \n Black Panther: Wakanda Forever needs to be removed.\n");
   char answer[6];
   printf("\nWould you like to remove the movie to current movie list? (Y/N) ");
-  scanf("%s", answer);
+  scanf("%s", &answer);
 
   if(y ==  5)
   {
